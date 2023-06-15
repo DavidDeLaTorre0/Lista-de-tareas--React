@@ -1,0 +1,473 @@
+PARA CREAR EL PROYECTO
+npx create-react-app nombre_del_proyecto / o en este mismo nivel ./
+
+
+------------------------------------------------------------------
+
+npm start para que nos inicialice el localhost:3000 y nos inciara como un live server, cuando es guardado se cara automaticamente
+
+-------------------------------------------------------------------
+POR CADA COMPONENTE QUE CREEMOS HAY QUE AÑADIRLO EN EL INDEX JS, EN ESTE CASO ES SRC/APP 
+Y DENTRO DE APP IMPORTAR LOS DEMAS
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+//Le estamos pasando los componentes que queremos renderizar, en este caso los comopnentes que se encuentran dentro de App.js
+root.render(
+    <App />
+);
+
+
+-----------------------------------------------------------------------
+APP.JS:
+import logo from './logo.svg';
+import React from 'react';
+import { TodoCounter } from './TodoCounter';
+import { TodoSearch } from './TodoSearch';
+import { TodoList } from './TodoList';
+import { TodoItem } from './TodoItem';
+import { CreateTodoButton } from './CreateTodoButton';
+//import './App.css';
+const todos = [
+  { text: 'Cortar cebolla', completed: true },
+  { text: 'Tomar el curso de intro a React', completed: true },
+  { text: 'Llorar con la llorona', completed: false },
+  { text: 'LALALALAA', completed: false },
+];
+
+
+//Elementos :
+      //TodoCounter  //Contador de nuestros todos
+      //TodoSearch  //Buscador de todos
+      //TodoList //Lista de todos     
+      //TodoItem //Dentor de esta lista de to dos vamos a ir poniendo los todos que vayan creardo los usuraios en nuestra aplicacion
+      //CreateTodoButton  //Boton creado
+
+//DATO: POR CADA COMPONENTE NO QUEREMOS CREAR UN DIV PARA ENVOLVER EL RESTO DE ELEMENTOS QUE TENEMOS QUE RENDERIZAR EN NUESTRO COMPONENTE Y ESTO PUEDE SER MALO ASI QUE:    
+      //IMPORTAMOS REACT FROM REACT  
+      //En vez de tener divs vamos a pedirle a react que nos renderice una etiqueta invisible, esta se llama React.Fragment, con F mayuscula porque recuerda que es un componente
+      //¿Por que en vez de un div con todos los componentes tenemos que enviar esta etiqueta(Una etiqueta y todos los componentes dentro)?
+      //Lo que pasa es que React, para sus calculos internos necesita que solo enviemos una etiqueta por componente, con esta etiqueta enviamos la cantidad que querramos
+      
+  function App() {
+    return (
+      <React.Fragment>
+        <TodoCounter />
+        <TodoSearch />
+  
+        <TodoList>
+          {todos.map(todo => (
+            <TodoItem
+              key={todo.text}
+              text={todo.text}
+              completed={todo.completed}
+            />
+          ))}
+        </TodoList>
+  
+        <CreateTodoButton />
+      </React.Fragment>
+    );
+  }
+
+// A la hora de recoger los datos dentro de la lista definimos que recibimos una propiedad text y recogemos la variable en la que sabeos que va a estar "todo.text"
+//Cuando hacemos un render de una lista (en la linea 38  llamando al metodo .map del array de todos y renderizando un todo por cada uno de los todos que hay en nuestro array de todos), cuando se hace este tipo de cosas de renderizar un elemento en una lista tenemos que enviarle una propiedad especial que se llama key a nuestros componentes esto es para que react pueda identificar cual componenete es  cual dentro de una lista y asi nos evite render inecesarios cunado un elemento no debe cambiar (esto son cosas de react internas) pero es muy sencillo solucionar : 
+//Solo tenemos que enviarle un identificador a cada uno  de los componentes , y si vemos nuestro array, lo unico que es diferente en cada uno de los todos es el texto, no vamos a tener dos todos con el mismo texto, así que como id unnico le enviamos la misma popiedad = todo.text  
+//De esta forma definimos la estructura de componentes
+export default App; 
+
+--------------------------------------------------------------------
+Counter: para llevar un conteo de las tareas totales y las completadas.
+Search: para filtrar los TODOs de la lista.
+List: en donde tendremos cada uno de los TODOs.
+Item: será cada uno de los TODOs.
+Add Todo: botón para agregar un nuevo TODO.
+-----------------------------------------------------------------------------
+
+MANEJO DE EVENTOS
+
+onClick, onMouseDown, onMouseLeave, onMouseDownEnter, onMouseOut, onMouseOver, onKey ....
+
+
+
+function CreateTodoButton(){
+    return(
+        <button 
+        className="CreateTodoButton"
+        onClick={}
+        >+</button>
+    );
+}
+
+export { CreateTodoButton };
+
+le enviamos una funcion, podemos enviarle un texto pero en este caso y muchis hacia una funcion.
+
+
+function CreateTodoButton(props){
+    const onClickButton = () =>{
+        alert('Aqui se deberia abrir el modal');
+    };
+    return(
+        <button 
+        className="CreateTodoButton"
+        onClick={onClickButton}
+        >+</button>
+    );
+}
+
+export { CreateTodoButton };
+
+las arrow function nos ayudan a que no se ejecute la accion al omento que carga la pagina, si aqui no hubiera arroe function , nada mas cargar la pagina, saldria alert('Aqui se deberia abrir el modal')
+
+
+OJOOOOOOOOO--------------------------
+function CreateTodoButton(props){
+    const onClickButton = (msg) =>{
+        alert(msg);
+    };
+    return(
+        <button 
+        className="CreateTodoButton"
+        onClick={onClickButton('Aqui se deberia abrir el modal')}
+        >+</button>
+    );
+}
+
+export { CreateTodoButton };
+
+DE ESTA FORMA TAMBIEN PASA LO MISMO, HABRIA QUE PONERLE EN EL onClick una arrow function  onClick={() => onClickButton('Aqui se deberia abrir el modal')}
+¿Porque?
+Por que se esta ejecutando onClickButton() este metodo, cuando react, monta y renderiza, nuestro componente dice que la funcion onClick es esa funcion y la ejecuta directamente, 
+en cambio si se envuelve en una arrow function solo se ejecuta cuando nosotros clickemos
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+MANEJO DE ESTADO
+
+//Si quieres importar todo React para usar useState
+import React from 'react';
+//Lo vas a usar de esta forma:
+const [searchValue, setSearchValue] = React.useState('')
+
+//Si quieres importar unicamente useState
+import { useState } from 'react';
+//Lo vas a usar de esta forma: 
+const [searchValue, setSearchValue] = useState('')
+
+useState tiene dos elementos:
+
+El valor (quien seria value)
+La funcion que cambia el valor (quien seria setValue)
+En useState es siempre necesario definir un valor como parametro. Puede ser un string, array, booleano o númer
+
+const [searchValue, setSearchValue] = useState('')
+const [searchValue, setSearchValue] = useState(false)
+const [searchValue, setSearchValue] = useState(['Dorime', 'Ameno'])
+const [searchValue, setSearchValue] = useState(0)
+
+
+const onSearchValueChange = (event) =>{
+        console.log(event.target.value);
+        setSearchValue(event.target.value);
+    }
+
+En la etiqueta donde vamos a manejar el evento, no debemos olvidar colocar el value que recibirá el valor de useState. Ejemplo:
+
+
+<input
+  className="TodoSearch"
+  placeholder="Ingresa un POYO Todo"
+  value={searchValue}
+	onChange={onSearchValueChange}
+/>
+
+--------------------------------
+Así era como se trabajaba antes:
+/* 
+class Componente extends React.Component{
+    constructor(){
+        this.state ={
+            nombre:"Juan"
+        };
+    }
+
+    render() {
+        return(  Aqui definimos un nuevo nombre cuadno se haga click sobre este div 
+            <div onClick={() => this.useState('Enrique')}>{this.state.nombre}</div>
+        )
+    }
+} 
+*/
+AHORA:
+      EXPLICACION Y EJEMPLO  - REACT.USESTATE(); NOS DEVUELVE UN ARRAY DE DOS POSICIONES, LA POSICION 0 VA A TENER NUESTRO ESTADO, EN ESTE CASO 'JUAN', PERO LA POSICION NUMERO 1  
+      TIENE UNA FUNCION QUE NOS VA APERMITIR MODIFICAR NUESTRO ESTADO (ESTO ES UN EJEMPLO PERO NO SE HACE ASI, ES SOLO UN EJEMPLO VISUAL)
+
+function TodoSearch(){
+    
+    const [] = React.useState('Juan');
+    [
+        'Juan',
+        setState('Enrique')
+    ]
+
+
+    const onSearchValueChange = (event) =>{
+        return console.log(event.target.value);
+    }
+
+    return(
+        <input 
+            className='TodoSearch' 
+            type="text" 
+            placeholder="Cebolla"
+            onChange={onSearchValueChange}
+        />
+    );
+}
+
+export { TodoSearch };
+
+----------------------------------------------------------------------------------------------------------------
+
+ORGANIZACION DE ARCHIVOS Y CARPETAS
+└── src/
+    ├── assets/
+    │   ├── img/
+    │       └── foto.jpg
+    │   ├── fonts/
+    │       └──ubuntu.woff2
+    ├── components/
+    │   ├── CreateTodoButton/
+    │       ├── index.js
+    │       └── CreateTodoButton.css
+    │   ├── TodoCounter/
+    │   ├── TodoItem/
+    │   ├── TodoList/
+    │   ├── TodoSearch/
+    ├── context/
+    │   ├── TodoContext.js
+    ├── hooks/
+    │   ├── useLocalStorage.js
+    ├── utils/
+    │   ├── fetch.js
+
+    -----------------------------------------------------------------------------------------------------------------
+
+    LOCAL STORAGE----PERSISTENCIA DE DATOS
+
+    En consola:
+    localStorage solo admite string, no admite ni objetos ni booleans ni numeros
+                        ('LLAVE','VALOR')
+    localStorage.setItem('ejemplotodos','frase')
+    
+    ¿Como se puede entonces pasar un objeto?
+
+    JSON.stringify() -- Transforma en texto cualquier objeto que tengamos en js (objetos, arrays, otros strings,etc.. )
+    JSON.parse()
+
+    JSON.stringify([{text: 'todos', complete: false}])  //DEVUELVE  '[{"text":"todos","complete":false}]'
+
+    Si lo pasamos a una variable
+        const ejemplo = JSON.stringify([{text: 'todos', complete: false}])  //DEVUELVE  '[{"text":"todos","complete":false}]'
+        JSON.parse(ejemplo)
+    DEVUELVE 
+        0:{text: 'todos', complete: false}
+        length:1
+        [[Prototype]]:Array(0)
+
+        Ahora una vez creada esa variable :
+        localStorage.setItem('ejemplotodos',ejemplo)
+
+        Ya deberiamos tener esa informacion guardada, para verla escribiriamos el siguiente comando:
+            localStorage.getItem('ejemplotodos') 
+            DEVUELVE '[{"text":"todos","complete":false}]'
+
+            TENDRIAMOS QUE PEDIRLO CON FORMATO JSON:
+             JSON.parse(localStorage.getItem('ejemplotodos')) 
+             DEVUELVE 
+                    0:{text: 'todos', complete: false}
+                    length:1
+                    [[Prototype]]:Array(0)
+
+AUNQUE RECARGUES EL NAVEGADOR LA INFORMACION SE QUEDA ALMACENADA---- MIRAR CODIGO EN APP.JS
+    --------------------------------------------------------------------------------------------------------------------------------------
+    CUSTOM HOOK PARA LOCAL STORAGE
+
+    MIrar video 14
+    --------------------------------------------------------------------------------------------------------------------------------------
+    MANEJO DE EFECTOS
+
+        //useEffect va ahacer que este console, se muestre despues de haber renderizado todo lo demas, 
+        //porque "segun las reglas de cada efecto " la funciuon de este es ejecuitarlo cuando ya react haya renderizado todo lo demás en consola se verian el console log de antes y despues, primero y a continuacion use effect
+        //Se ejecuta cada vez que cargamos el componente(Por ejemlo con la accion de escribir en el input)
+         
+        React.useEffect(()=> {
+        Si le enviamos un array vacio nuestro codigo solo se va a ejecutar una vez, sin importar las veces que se re-renderice el componente
+        console.log('use effect');
+    }, []); 
+        console.log('Reder(antes del useeffect)');
+    React.useEffect(()=> {
+        //Si no queremos que se ejecute todas las veces que se renderice nuestro componente, pero SI cuando haya algun cambio en nuestro estado
+        //En este caso llamamos a totalTodos, escucharemos desde nuestro efecto todos los cambios que haya en nuestros TODOs
+        console.log('use effect');
+    }, [totalTodos]);
+
+    console.log('Reder(despues del useeffect)');
+    
+
+
+
+    💡 Como aprendimos en el minuto 04:57, podemos enviarle un segundo argumento a la función useEffect para determinar cuándo ejecutamos o no el código de nuestro efecto.
+.
+🔂 Podemos enviar un array vacío para decirle a nuestro efecto solo se ejecute una vez, cuando recién hacemos el primer render de nuestro componente.
+.
+👂 O también podemos enviar un array con distintos elementos para decirle a nuestro efecto que no solo ejecute el efecto en el primer render, sino también cuando haya cambios en esos elementos del array.
+.
+🔁 Si no enviamos ningún array como segundo argumento de nuestro efecto, esta función se ejecutará cada vez que nuestro componente haga render (es decir, cada vez que haya cambios en cualquiera de nuestros estados).
+.
+.
+❓ ¿Cuál de estas opciones crees que debimos usar en nuestro efecto dentro de useLocalStorage?
+.
+Al menos por ahora, lo mejor habría sido enviar un array vacío para que nuestro efecto solo se ejecute una vez, en el primer amado a nuestro custom hook / render de nuestro componente. 😌
+.
+Lastimosamente, olvidé escribir ese segundo parámetro durante la clase. Esto hace que el código de mi efecto se ejecute cada vez que hay un cambio en el estado. Y como hacemos cambios a estado dentro del efecto, entonces el efecto se ejecutará sin parar todo el tiempo que usemos la aplicación. 😱
+.
+Afortunadamente, como todo el código del useEffect está envuelto en un setTimeout, cada ejecución del código de efecto tarda 1 segundo en volver a ejecutarse, por lo que la app no va a crashear. 😓
+.
+¡Este error podemos resolverlo en el siguiente curso de la saga! 🙏
+Incluso podemos profundizar muchísimo más en este tipo de errores en un curso de optimización, rendimiento y debugging con React.js. 💚
+.
+.
+💪 Mientras tanto, sé mejor que yo. No olvides escribir el segundo parámetro de tu efecto en useLocalStorage para que el código de tu efecto solo se ejecute una vez y no tengas problemas de rendimiento en tu versión de TODO Machine.
+    --------------------------------------------------------------------------------------------------------------------------------------
+
+    ESTADO COMPARTIDO  --   MIRAR VIDEO 15-16 IMPORTANTE
+
+    Es una forma de tener acceso a datos a través del árbol de componentes sin tener que pasar props manualmente en cada nivel, usando datos globales.
+
+    Para esto tenemos un proveedor que envolverá a todos los componentes que serán los consumidores de nuestro contexto.
+
+    Fases:
+
+    Crear el contexto de nuestra aplicación
+    Proveer nuestro contexto con los datos que queremos globales.
+    Consumir los datos desde cualquier parte de nuestra aplicación.
+
+    --------------------------------------------------------------------------------------------------------------------------------------
+   
+    Portales
+¿Qué son?
+Una API para renderizar componentes fuera de la jerarquía DOM de su aplicación.
+Incluso podrías renderizar cosas en una ventana nueva! 😎
+.
+
+¿Cómo se crean?
+code-snapshot4.png
+.
+
+¿Para qué?
+Perfecto para ocasiones donde los estilos CSS restringen los elementos. Por ejemplo, problemas de apilamiento (z-index) y desbordamiento (overflow).
+.
+
+¿Cómo usarlos?
+En lugar de retornar un elemento en el método render de un componente, retorna un portal.
+code-snapshot3.png
+El componente <Afuera/> se renderizará como descendiente directo de document.body 👍🏻
+.
+
+¿Cuándo usarlos?
+Modales
+Tooltips
+Menús flotantes
+Widgets
+
+ --------------------------------------------------------------------------------------------------------------------------------------
+
+ DEPLOY CON GITHUB PAGES
+
+Existen varias maneras para hacer deploy de nuestras aplicaciones, una de las más populares es GitHub Pages.
+
+GitHub Pages es un servicio de GitHub que nos permite alojar nuestros proyectos y mostrarlos en vivo en una página web estática sin necesidad de pagar por hosting o tener conocimientos en servidores, aunque tiene algunas limitantes.
+
+Para inicializar nuestro proyecto con Create React App, utilizamos el comando npm start, lo que hace este comando, es que iniciar un servidor de node.js para poder compilar nuestro código de React a JavaScript, también para poder estar al pendiente por cambios y refrescar automáticamente nuestro proyecto al hacer algún cambio, entre muchas otras cosas.
+
+La principal desventaja de GitHub Pages, es que no podemos correr un servidor de node.js, solamente soporta archivos estáticos:
+
+HTML
+CSS
+JavaScript
+Imágenes
+Para hacer el deploy de nuestra aplicación, necesitaremos hacer lo siguiente:
+
+Instalar la dependencia gh-pages con npm.
+-----------------------npm install --save-dev gh-pages----------------------
+Modificar un poco el package.json
+Y utilizaremos otros comandos de Create React App para construir una versión de producción de nuestro proyecto.
+Instalar gh-pages
+Para instalar esta dependencia en nuestro proyecto, necesitamos ejecutar este comando en la terminal, dentro de la carpeta root en la que está nuestro proyecto: npm install --save-dev gh-pages o npm i -D gh-pages que es lo mismo.
+
+⚠️ Si aún no tienes tu proyecto en un repositorio de GitHub, es el momento perfecto para subirlo, con todos tus cambios.
+
+Modificar nuestro package.json
+Primero necesitamos agregar la regla como la siguiente:
+
+"homepage":"https://tu-usuario-de-github.github.io/nombre-del-repositorio"
+Para que funcione necesitas poner los datos necesarios en la URL.
+Y ahora agregamos unos scrips de gh-pages para el deploy, estos scripts prepararán nuestra aplicación para el deploy.
+Dentro de npm podemos utilizar los prefijos: pre y post para decir que ejecute cualquier cosa que queramos antes o después de ejecutar el script que necesitamos.
+
+Nuestro package.json quedaría como el siguiente:
+
+{
+  "homepage":"https://brandonargel.github.io/todo-app"
+  "name": "curso-intro-react",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3",
+    "web-vitals": "^1.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "gh-pages": "^3.2.3"
+  },
+}
+Deploy de nuestra aplicación
+Ahora solo necesitamos ejecutar nuestros scripts: npm run deploy.
+
+¡Al hacer esto, si no nos aparece ningún error, quiere decir nuestra página ya está en vivo!
+
+Si te aparece algún error, no dudes en dejar tu pregunta para que podamos ayudarte, también puedes revisar los pasos anteriores o revisar esta Guía para subir tus proyectos de React con gh-pages{target="_blank"}.
+
+¿Cómo puedo ver mi aplicación en la web?
+Para poder ver tu aplicación ya en la web puedes entrar a la URL que escribiste en el homepage de tu package.json,
+
+Otra forma es entrar al repositorio de tu proyecto en GitHub -> Ajustes, y en el menú de la izquierda, en Code and automation te aparecerá una sección de Pages, ahí estará un link para ver tu proyecto.
